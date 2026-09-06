@@ -29,26 +29,15 @@ if not os.path.exists(VIDEO_FILE):
     url = f"https://drive.google.com/uc?id={FILE_ID}"
     gdown.download(url, VIDEO_FILE, quiet=False)
 
-# Optimized FFmpeg Command: Forcing 1080p, 30FPS & Low Bitrate
-print("Starting optimized stream to YouTube...")
+# ZERO-CPU Direct Copy Stream to YouTube (Fixes speed=0.41x lag)
+print("Starting ZERO-LOAD direct stream to YouTube...")
 ffmpeg_cmd = [
     'ffmpeg',
     '-re',
     '-stream_loop', '-1',
     '-i', VIDEO_FILE,
-    '-vf', 'scale=1920:1080',
-    '-r', '30',
-    '-c:v', 'libx264',
-    '-preset', 'ultrafast',
-    '-tune', 'zerolatency',
-    '-b:v', '800k',
-    '-maxrate', '1000k',
-    '-bufsize', '2000k',
-    '-pix_fmt', 'yuv420p',
-    '-g', '60',
-    '-c:a', 'aac',
-    '-b:a', '96k',
-    '-ar', '44100',
+    '-c:v', 'copy',
+    '-c:a', 'copy',
     '-f', 'flv',
     f'rtmp://a.rtmp.youtube.com/live2/{STREAM_KEY}'
 ]
