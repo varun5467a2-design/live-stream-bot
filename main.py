@@ -4,7 +4,7 @@ import threading
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import gdown
 
-# Render deployment health check bypass server
+# Render web service health check bypass server
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
@@ -19,7 +19,6 @@ def run_web_server():
 # Start background HTTP server
 threading.Thread(target=run_web_server, daemon=True).start()
 
-# Pre-configured Google Drive File ID & Stream Key
 FILE_ID = "1mwrgSvuaDILeNdeiDa8HyF_QCQhPgWj-"
 STREAM_KEY = os.environ.get("YOUTUBE_STREAM_KEY", "zv8s-bzza-rwca-6sc2-by5e")
 VIDEO_FILE = "video.mp4"
@@ -30,24 +29,15 @@ if not os.path.exists(VIDEO_FILE):
     url = f"https://drive.google.com/uc?id={FILE_ID}"
     gdown.download(url, VIDEO_FILE, quiet=False)
 
-# FFmpeg streaming loop execution
-print("Starting continuous live stream to YouTube...")
+# ZERO-CPU Direct Copy Stream to YouTube
+print("Starting DIRECT PASS-THROUGH stream to YouTube...")
 ffmpeg_cmd = [
     'ffmpeg',
     '-re',
     '-stream_loop', '-1',
     '-i', VIDEO_FILE,
-    '-c:v', 'libx264',
-    '-preset', 'ultrafast',
-    '-tune', 'zerolatency',
-    '-b:v', '1000k',
-    '-maxrate', '1200k',
-    '-bufsize', '2400k',
-    '-pix_fmt', 'yuv420p',
-    '-g', '60',
-    '-c:a', 'aac',
-    '-b:a', '96k',
-    '-ar', '44100',
+    '-c:v', 'copy',
+    '-c:a', 'copy',
     '-f', 'flv',
     f'rtmp://a.rtmp.youtube.com/live2/{STREAM_KEY}'
 ]
