@@ -1,7 +1,18 @@
 import os
 import subprocess
+import gdown
 
-# Render environment variables se Stream Key uthayega
+# Google Drive File ID (Apni file ID yahan daalein)
+FILE_ID = "YOUR_GOOGLE_DRIVE_FILE_ID_HERE"
+VIDEO_FILE = "stream.mp4"
+
+# Drive se video download karne ke liye
+if not os.path.exists(VIDEO_FILE):
+    print("Google Drive se video download ho rahi hai...")
+    url = f"https://drive.google.com/uc?id={FILE_ID}"
+    gdown.download(url, VIDEO_FILE, quiet=False)
+
+# YouTube Stream Key from Render Environment Variables
 STREAM_KEY = os.environ.get("YOUTUBE_STREAM_KEY")
 RTMP_URL = f"rtmp://a.rtmp.youtube.com/live2/{STREAM_KEY}"
 
@@ -9,7 +20,7 @@ ffmpeg_cmd = [
     "ffmpeg",
     "-re",
     "-stream_loop", "-1",
-    "-i", "stream.mp4",
+    "-i", VIDEO_FILE,
     "-c:v", "libx264",
     "-preset", "veryfast",
     "-b:v", "3000k",
@@ -24,5 +35,5 @@ ffmpeg_cmd = [
     RTMP_URL
 ]
 
-print("Stream shuru ho rahi hai...")
+print("Live stream start ho rahi hai...")
 subprocess.run(ffmpeg_cmd)
