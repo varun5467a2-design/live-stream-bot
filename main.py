@@ -24,7 +24,7 @@ def download_video():
         print(f"Downloading video from Google Drive (file id: {gdrive_file_id})...")
         url = f"https://drive.google.com/uc?id={gdrive_file_id}"
         try:
-            gdown.download(url, local_path, quiet=False, fuzzy=True)
+            gdown.download(url, local_path, quiet=False)
             print("Video download complete.")
         except Exception as e:
             print(f"Video download failed: {e}")
