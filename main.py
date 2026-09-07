@@ -50,21 +50,14 @@ def run_stream():
     else:
         video_input = os.environ.get("VIDEO_PATH", "input.mp4")
 
-    # Complete FFmpeg Command for Infinite Looping Stream
+    # Direct-push FFmpeg command: video already H.264/AAC hai, isliye re-encode
+    # karne ki bajaye seedha copy karke RTMP me bhejte hain -> CPU load bahut kam
     ffmpeg_cmd = [
         "ffmpeg",
         "-re",                     # Read input at native frame rate
         "-stream_loop", "-1",      # Loop input video endlessly
         "-i", video_input,         # Video source
-        "-c:v", "libx264",         # H.264 Video Codec
-        "-preset", "veryfast",     # Low CPU usage preset
-        "-maxrate", "3000k",       # Max video bitrate
-        "-bufsize", "6000k",       # Buffer size
-        "-pix_fmt", "yuv420p",     # Standard pixel format
-        "-g", "58",                # Keyframe interval
-        "-c:a", "aac",             # Audio Codec
-        "-b:a", "128k",            # Audio bitrate
-        "-ar", "44100",            # Audio sample rate
+        "-c", "copy",              # No re-encoding, direct stream copy (low CPU)
         "-f", "flv",               # FLV format for RTMP streaming
         stream_target
     ]
