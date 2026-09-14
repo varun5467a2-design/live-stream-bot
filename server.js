@@ -24,9 +24,16 @@ function startStream() {
     '-re',
     '-stream_loop', '-1',
     '-i', VIDEO_FILE,
-    '-c:v', 'copy',
+    '-c:v', 'libx264',
+    '-preset', 'veryfast',
+    '-maxrate', '700k',
+    '-bufsize', '1400k',
+    '-pix_fmt', 'yuv420p',
+    '-g', '48',
+    '-keyint_min', '48',
     '-c:a', 'aac',
     '-b:a', '128k',
+    '-ar', '44100',
     '-f', 'flv',
     RTMP_URL
   ]);
